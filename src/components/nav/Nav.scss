@@ -2,7 +2,7 @@
 @import "../stylesheet/text.scss";
 .nav {
     width: 100vw;
-    background-color: $main-color;
+    background-color: #FFF;
     height: 60px;
     margin-bottom: 60px;
 
@@ -19,10 +19,10 @@
     &__link {
         flex: 1;
         font-weight: bold;
-        color: #fff;
+        color: $main-color;
         font-size: 1.5em;
         &:hover {
-            color: #fff;
+            color: $main-color;
         }
     }
 

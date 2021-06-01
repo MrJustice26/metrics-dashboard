@@ -1,9 +1,21 @@
-.button {
-    border: 1px solid #3D405B;
-    background-color: #fff;
-    text-transform: uppercase;
-    width: 150px;
-    transition: .2s;
+@import "./vars.scss";
+
+.btn {
+
+    &-primary {
+        border: none;
+        background-color: $accent-color;
+        text-transform: uppercase;
+        font-weight: bold;
+        color: #fff;
+        width: 150px;
+        transition: .2s;
+
+        &:hover {
+            background-color: $accent-color-lighter;
+        }
+    }
+    
 
     
 }
