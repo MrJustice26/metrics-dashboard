@@ -1,68 +1,77 @@
 import axios from 'axios'
 import React from 'react'
 import "./Search.scss";
-import { Button, TextField} from '@material-ui/core';
-import {Autocomplete} from '@material-ui/lab';
+import {TextField} from '@material-ui/core';
+import {Alert, Autocomplete} from '@material-ui/lab';
 import { StocksContext } from './StocksContext';
-import { BrowserRouter, Link, useHistory } from 'react-router-dom';
+import { BrowserRouter, useHistory } from 'react-router-dom';
+import _ from 'lodash';
+import url from './url';
 
-const url = 'http://localhost:4000'
+/*
+interface IStocksData {
+    id_akcji: number, symbol_akcji: string, nazwa_akcji: string
+}
+
+type IStocksDataType = [IStocksData]
+*/
+
 
 const Search: React.FC = () => {
-    const [stocks, setStocks] = React.useContext(StocksContext)
     
-    const [text, setText] = React.useState('')
-    const [isLoading, setIsLoading] = React.useState(false)
+
+    const [stocks, setStocks] = React.useContext<any[]>(StocksContext)
+    const [isError, setIsError] = React.useState<boolean>(false);
+    const [text, setText] = React.useState<string>('')
+
 
     const history = useHistory()
     
-    React.useEffect(() => {}, [text])
+    React.useEffect(() => {
+        const timeOut = setTimeout(() => fetchData(text), 500)
+        setIsError(false)
+        return () => clearTimeout(timeOut)
 
-    const fetchData = async (e:any, arg: string): Promise<void> => {
+    }, [text])
+
+    const fetchData = async (arg: string) => {
         console.log("FETCHING DATA")
-        e.preventDefault()
         if (text.length){
             setText('')
-            setIsLoading(true)
             try{
                 const response: any = await axios.get(`${url}/api/stock/${arg}`)
-                
                 setStocks(response.data)
-                setIsLoading(false)
+
             }
             catch(e){
+                setIsError(true)
                 console.error(`Error: ${e}`)
-                setIsLoading(false)
             }
         }
     }
 
-    const fetchTextData = (event: any): void => {
-        setText(event.target.value)
-        setTimeout(() => {
-            fetchData(event, text)
-        }, 2000)
-        
+    const fetchTextData = (event: any): any => {
+        setText(event.target.value)  
     }
 
     const changeUrl = (event: React.ChangeEvent<{}>, value: any): void => {
-        console.log(value)
         history.push(`/stock/${value['symbol_akcji']}`)
     }
     return (
         <BrowserRouter>
             <div className="search__inner">
-                <form onSubmit={(e) => fetchData(e, text)} className="search__form">
+                <form onSubmit={(e) => e.preventDefault()} className="search__form">
                     <Autocomplete 
                     noOptionsText="Pobieranie danych..."
-                    id="combo-box-demo" options={stocks.length > 10 ? stocks.splice(0, 10) : stocks} 
+                    id="combo-box-demo" options={stocks}
                     getOptionLabel={(option: any) => `${option['symbol_akcji']} | ${option['nazwa_akcji']}`}
                     style={{ width: 500}}
                     onChange={(event, value) => changeUrl(event, value)}
                     renderInput={(params) => <TextField {...params} value={text} label="Nazwa/symbol akjcji" variant="outlined" onChange={(e) => fetchTextData(e)} />}
                 />
-                   
+                
                 </form>
+                {isError && <Alert className="search__alert" severity="error" onClick={() => setIsError(false)}>Pojawił się błąd przy otrzymaniu danych!</Alert>}
             </div>
         </BrowserRouter>
         

@@ -4,6 +4,7 @@
 .search {
     &__inner {
         margin: 0 auto ;
+        max-width: 500px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -24,5 +25,15 @@
         font-size: 1.5em;
         border-radius: 5px;
         margin-top: 50px !important;
+    }
+
+    &__alert {
+        width: 100%;
+        margin-top: 1em;
+        font-weight: 600;
+
+        :hover {
+            cursor: pointer;
+        }
     }
 }
