@@ -16,9 +16,9 @@ const NavBar: React.FC = () => {
                                 <Link to="/" className="link nav__link">Metrics Dashboard</Link>
                             </Typography>
                         </div>
-                        <Button color="inherit">
+                        {/* <Button color="inherit">
                             <Link to="/login" className="nav__btn">Zaloguj</Link>
-                        </Button>
+                        </Button> */}
                             
                     </div>
                 </Toolbar>

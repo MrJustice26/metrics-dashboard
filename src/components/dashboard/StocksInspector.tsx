@@ -7,6 +7,10 @@ import { Link } from 'react-router-dom';
 import Chart from './Chart';
 import './StocksInspector.scss'
 import url from './url';
+import {convertDate} from '../utils';
+
+
+
 
 const StocksInspector: React.FC = () => {
     const [stockData, setStockData] = React.useState<Object>([])
@@ -345,13 +349,8 @@ const StocksInspector: React.FC = () => {
         const today: Date = new Date()
         const thirtyDaysBefore: Date = new Date(new Date().setDate(today.getDate() - 30))
 
-        function convertDate(date: Date): string {
-            return `${date.getFullYear()}-${date.getMonth().toString().length === 2 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)}-${date.getDate().toString().length === 2 ? date.getDate() : "0" + date.getDate()}`
-        }
+        
 
-        for (let stock of data){
-            console.log(stock.open, stock.date, new Date(stock.date).getDate(), new Date(stock.date).getMonth() + 1)
-        }
 
         const fetchNameStock = async () => {
             let dataStock = (await axios.get(`${url}/api/stock/${params['stock']}`))['data'].filter((stock: any) =>{
@@ -360,7 +359,6 @@ const StocksInspector: React.FC = () => {
             if (dataStock.length){
                 setStockName(dataStock[0]['nazwa_akcji'])
             }
-            console.log(dataStock)
 
         }
 
@@ -380,18 +378,22 @@ const StocksInspector: React.FC = () => {
         // fetchStock()
 
     }, [params['stock']])
-
-    console.log(params['stock'])
     return (
         <div>
             {stockName ? (
                 <div className="stock__container">
-                    <Chart data={...data} />
+                    <div className="stock__inner">
+                        <h1>{stockName}</h1>
+                        <div className="stock__chart">
+                            <Chart type="line" data={data} />
+                        </div>
+                    </div>
+                    
                 </div>
             ) : (
                 <div className="error__container">
-                    <Alert className="error__alert" severity="error">Jest podana zły symbol akcji</Alert>
-                    <Link to="/" className="error__link">Wrócić do poszukiwania akcji</Link>
+                    <Alert className="error__alert" severity="error">Podana nazwa symbolu akcji jest zła</Alert>
+                    <Link to="/" className="error__link">Znajdź inną akcje</Link>
                 </div>
             )}
         </div>
